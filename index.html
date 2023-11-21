@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Password</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+
+    body{
+    text-align:center;
+    margin: 0;
+    padding: 0;
+    background-color:#858585;
+    }
+    main{
+    width:80%;
+    margin: auto;
+    height: 100vh;
+        
+    }
+    h1{
+    background:linear-gradient(to bottom right,#bfbcb8,#bfbcb8,#fffdfa,#bfbcb8,#bfbcb8);
+    border-radius:1rem;
+    border:2px dotted black;
+    font-family:'Varela Round', sans-serif;
+    font-size:5vw;
+    animation: titleMove 3s ease-in-out infinite;
+    }
+    h2{
+    font-family:'Varela Round', sans-serif;
+    }
+    h3#cyc{
+    font-size:3vw;
+    font-family:'Varela Round', sans-serif;
+    color:darkred;
+    }
+    div#game{
+    display:none;
+    }
+
+    input.letter-input{
+    text-align:center;
+    font-size:2rem;
+    width:calc(80% / 5);
+    box-shadow: 5px 5px 4px 1px rgba(0,0,0,80%);
+    background-color:#d9d4ce;
+    margin: 1rem 1%;
+    }
+    table{
+    margin:auto;
+    }
+    tr{
+    vertical-align:top;
+    }
+    th, td{
+    padding:1rem;
+    text-align:center;
+    border:2px dotted black;
+    background-color:#bfbcb8;
+    }
+
+    @keyframes titleMove{
+    0%{
+        transform:scale(1)
+    }
+    55%{
+        transform:scale(1.1)
+    }
+    100%{
+        transform:scale(1)
+    }
+    }
+
+    img#character-image {
+    width:250px;
+    height:250px;
+    }
+    select#image-select {
+
+    }
+    button#playGame{
+    display:none;
+    text-align:center
+    }
+    </style>
+</head>
+<body>
+    <main>
+        <h1 id="title"><em>GUESS THE PASSWORD!</em></h1>
+        <h2 id="but-first"><em>but first...</em><h2>
+        <h3 id="cyc">CHOOSE YOUR CHARACTER.</h3>
+        <img src="" width="300" height="300" id="character-image" alt="character-select-image" />
+        <select name="image-choice" id="image-select">
+          <option value="" disabled selected>Select an image</option>
+          <option value="mario-raccoon">Tanooki Mario</option>
+          <option value="mario-cat">Mario Cat</option>
+          <option value="mario-astro">Astronaut Mario</option>
+          <option value="peach-wedding">Wedding Peach</option>
+          <option value="pink-peach">Pink Peach</option>
+          <option value="peach-fire">Fire Peach</option>
+          <option value="dk-ice">Icy DK</option>
+          <option value="dk-fire">Fire DK</option>
+          <option value="dk-black">Black DK</option>
+          <option value="jake">Jake</option>
+          <option value="gengar">Gengar</option>
+          <option value="sunny">Sunny</option>
+          <option value="sponge">Spongebob</option>
+          <option value="kiryu">Kiryu</option>
+        </select>
+          
+          <button id="playGame" onClick="startGame()">START!!!</button>
+          
+          <div id="game">
+            <form id="password-form">
+      <!--     <input class="letter-input" type="text" maxLength="1">
+          <input class="letter-input" type="text" maxLength="1">
+          <input class="letter-input" type="text" maxLength="1">
+          <input class="letter-input" type="text" maxLength="1">
+          <input class="letter-input" type="text" maxLength="1"> -->
+        </form>
+        <table>
+        <thead>
+          <tr>
+            <th>Wrong Letter!</th>
+            <th>Wrong Letter!</th>
+            <th>Wrong Letter!</th>
+            <th>Wrong Letter!</th>
+            <th>Wrong Letter!</th>
+          </tr>
+        <thead>
+        <tbody>
+          <tr>
+            <td id="wl0">X:</td>
+            <td id="wl1">X:</td>
+            <td id="wl2">X:</td>
+            <td id="wl3">X:</td>
+            <td id="wl4">X:</td>
+          </tr>
+        </tbody>
+        
+      </table>
+          </div>
+      </main>
+    <script>
+        const playButton = document.getElementById('playGame');
+const game = document.getElementById('game');
+const butFirst = document.getElementById('but-first');
+const cyc = document.getElementById('cyc')
+const passwordForm = document.getElementById('password-form');
+const wlOne = document.getElementById('wlOne');
+const wlTwo = document.getElementById('wlTwo');
+const wlThree = document.getElementById('wlThree');
+const wlFour = document.getElementById('wlFour');
+const wlFive = document.getElementById('wlFive');
+
+const correctBuzzer = new Audio("https://drive.google.com/uc?export=view&id=1w0gQp0tidOs1aT796JH0kQbP7Z2J9pEb");
+const wrongBuzzer = new Audio("https://drive.google.com/uc?export=view&id=1_MZJx3Xb7yX3EVjzOHzCpHrY0Z27yTJx");
+const congrats = new Audio("https://drive.google.com/uc?export=view&id=1XmSYFvSfDilUVHGfreMGKKqA9-fQpvQp");
+const youStink = new Audio("https://drive.google.com/uc?export=view&id=1A7FWjobku43bI3FX7BlxGW01Hkj_MTMi")
+
+
+let phrase = "juanp";
+
+let index = 0;
+
+for (let char of phrase) {
+  // console.log("hello");
+  const letterInput = document.createElement('input');
+  letterInput.type = "text";
+  letterInput.maxLength = "1";
+  letterInput.classList.add("letter-input");
+  letterInput.id = index.toString();
+  passwordForm.appendChild(letterInput);
+  index++;
+}
+
+  let correct = 0;
+  let wrong = 0;
+passwordForm.addEventListener("change", function(event) {
+  // console.log(event.target.value);
+  const thisInput = event.target;
+  const guess = thisInput.value;
+  console.log(guess);
+  console.log(thisInput.id);
+  
+  if (guess === phrase[thisInput.id]) {
+    console.log("You guessed Correct!");
+    thisInput.disabled = true;
+    thisInput.placeholder = guess;
+    correctBuzzer.play();
+    correct++;
+  }else{
+    console.log("You guessed Wrong!")
+    wrongBuzzer.play();
+    wrong++;
+    document.getElementById(`wl${thisInput.id}`).innerHTML += "<br>" + guess;
+    thisInput.value = "";
+    
+  }
+  if (correct == 5){
+    congrats.play();
+    console.log("Congratulations, you won!");
+  } else if (wrong == 3){
+    wrongBuzzer.pause();
+    youStink.play();
+    console.log("BOO! You stink!");
+    thisInput.disabled = true;
+  }
+});
+
+//Character Selection
+const imageSelect = document.getElementById("image-select");
+const characterImg = document.getElementById("character-image");
+
+const marioRaccoonSrc =
+  "https://drive.google.com/uc?export=view&id=1Zehno27FMtG5hDd-TyFRky9wyv53lcHj";
+const marioCatSrc =
+  "https://drive.google.com/uc?export=view&id=1ZgigMQZ1CmJVYNhZ6vaz7eiKk9ZjfNlY";
+const marioAstroSrc =
+  "https://drive.google.com/uc?export=view&id=1ZpeukvmCIX8dy_2md0zDO8rkKZoLHfRT";
+const peachWeddingSrc =
+  "https://drive.google.com/uc?export=view&id=1_2ZQiL4XlmPUI4UEW2fqvRFk4078cErK";
+const peachPinkSrc =
+  "https://drive.google.com/uc?export=view&id=1_4CcPhxb5oAa6Myzh8MZv2Fe7nWiupI_";
+const peachFireSrc =
+  "https://drive.google.com/uc?export=view&id=1_HjCzHSVvQadyuzQeNqCncP8ULKVBtWj";
+const dkIceSrc =
+  "https://drive.google.com/uc?export=view&id=1_Z1aNb5oK-MqI3hmqF_-Ba4tPWjkhAtD";
+const dkFireSrc =
+  "https://drive.google.com/uc?export=view&id=1_bE8cmnBAj1hYNmV_SRnun8NpDZCOMHF";
+const dkBlackSrc =
+  "https://drive.google.com/uc?export=view&id=1_f3Xb2c5vmEXk4l4XEs3RvhQONNxdVpx";
+
+const whyJakeSrc =
+  "https://drive.google.com/uc?export=view&id=1KUDFkW9Vg4XSDF1KzDcukoVQV6n5Yxk4";
+
+const gengarSrc =
+  "https://drive.google.com/uc?export=view&id=1L-L8yG7Ute4P5LZQTZ4Pf2f2lyYlkSwC";
+
+const sunnySrc =
+  "https://drive.google.com/uc?export=view&id=1V7ERWe9uF8x0-b683LhXG3JroayyZiEX";
+
+const spongeSrc =
+  "https://drive.google.com/uc?export=view&id=1xgSiANpBB0scNKNAoE6PM6NGb9SPovjB";
+
+const kiryuSrc =
+  "https://drive.google.com/uc?export=view&id=1SC_fzloveG2Y0C2Wfqu_LvGJhj2lvf4G";
+
+const characterSelectSrc =
+  "https://drive.google.com/uc?export=download&id=1ayfmqbm6-Ab2ws71xBS2SFHoGNdBJNOE";
+
+characterImg.src = characterSelectSrc;
+
+imageSelect.addEventListener("change", function () {
+  console.log(this.value);
+  if (this.value != imageSelect){
+    playButton.style.display = "block";
+  } if (this.value === "mario-raccoon") {
+    characterImg.src = marioRaccoonSrc;
+  } else if (this.value === "mario-cat") {
+    characterImg.src = marioCatSrc;
+  } else if (this.value === "mario-astro") {
+    characterImg.src = marioAstroSrc;
+  } else if (this.value === "peach-wedding") {
+    characterImg.src = peachWeddingSrc;
+  } else if (this.value === "pink-peach") {
+    characterImg.src = peachPinkSrc;
+  } else if (this.value === "peach-fire") {
+    characterImg.src = peachFireSrc;
+  } else if (this.value === "dk-ice") {
+    characterImg.src = dkIceSrc;
+  } else if (this.value === "dk-fire") {
+    characterImg.src = dkFireSrc;
+  } else if (this.value === "jake") {
+    characterImg.src = whyJakeSrc;
+  } else if (this.value === "gengar") {
+    characterImg.src = gengarSrc;
+  } else if (this.value === "sunny") {
+    characterImg.src = sunnySrc;
+  } else if (this.value === "sponge") {
+    characterImg.src = spongeSrc;
+  } else if (this.value === "kiryu") {
+    characterImg.src = kiryuSrc;
+  } else {
+    characterImg.src = dkBlackSrc;
+  }
+});
+
+function startGame() {
+  playGame.style.display = "none";
+  imageSelect.style.display = "none";
+  game.style.display = "block";
+  butFirst.style.display = "none";
+  cyc.style.display = "none";
+}
+    </script>
+</body>
+</html>
